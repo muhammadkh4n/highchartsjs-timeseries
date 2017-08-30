@@ -1,0 +1,124 @@
+{
+  "sigDef": {
+    "sigType": "thermo.ms.endura.all.v4",
+    "foundationInstrument": "endura",
+    "description": "Basic readbacks for Endura Mass Spec (TNG)",
+    "fieldNames": [
+      "Sweep Gas",
+      "Aux Gas P",
+      "Sheath Gas",
+      "Vaporizer Temp",
+      "Ion Transfer Tube Temp",
+      "FT Fan Current",
+      "FT Oven Alarm Voltage",
+      "Laser Status",
+      "Temperature (&deg;C):",
+      "IGRF3 Modulation"
+    ],
+    "aggFieldIndexes": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "fieldDescriptions": null
+  },
+  "data": [
+    {
+      "timeStampStart": 1503768438000,
+      "fieldValues": [
+        180,
+        286.2,
+        249.1,
+        199.7,
+        325,
+        4.2,
+        4,
+        3,
+        44,
+        -3.2
+      ],
+      "classification": true
+    },
+    {
+      "timeStampStart": 1503768449000,
+      "fieldValues": [
+        180,
+        286.2,
+        249.1,
+        199.7,
+        325,
+        4.2,
+        4,
+        3,
+        44,
+        -3.2
+      ],
+      "classification": false
+    },
+    {
+      "timeStampStart": 1503768452000,
+      "fieldValues": [
+        180,
+        286.2,
+        249.1,
+        199.7,
+        325,
+        4.2,
+        4,
+        3,
+        44,
+        -3.2
+      ],
+      "classification": true
+    },
+    {
+      "timeStampStart": 1503768454000,
+      "fieldValues": [
+        180,
+        286.2,
+        249.1,
+        199.7,
+        325,
+        4.2,
+        4,
+        3,
+        44,
+        -3.2
+      ],
+      "classification": true
+    },
+    {
+      "timeStampStart": 1503768553000,
+      "fieldValues": [
+        180,
+        286.2,
+        249.1,
+        199.7,
+        325,
+        4.2,
+        4,
+        3,
+        44,
+        -3.2
+      ],
+      "classification": true
+    },
+     {
+      "timeStampStart": 1503768553000,
+      "fieldValues": [
+        180,
+        286.2,
+        249.1,
+        199.7,
+        325,
+        4.2,
+        4,
+        3,
+        44,
+        -3.2
+      ],
+      "classification": true
+    }
+  ]
+}

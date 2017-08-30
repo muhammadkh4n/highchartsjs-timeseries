@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>HighCharts</title>
+        <script
+            src="https://code.jquery.com/jquery-3.2.1.min.js"
+            integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+            crossorigin="anonymous"></script>
+        <script src="https://code.highcharts.com/highcharts.src.js"></script>
+    </head>
+    <body>
+        <div class="container">
+            <div id="series-select">
+                <select id="series-options" name="">
+                    <option value="" selected="selected">Select Time Series</option>
+                </select>
+            </div>
+            <div class="charts-container" id="chart" ></div>
+        </div>
+        <script>
+         $(function(event) {
+             /** 
+              * create chart of selected series
+              * @param chart object: series property of chart options object
+              * @param data: json data property of fetched json document
+              * @param seriesIndex: selected series field value index
+              */
+             var genSeries = function (chart, data, seriesIndex) {
+                 chart.series[0].data = [];
+                 for(var i = 0; i < data.length; i++) {
+                     var timeStart = data[i].timeStampStart;
+                     var value = data[i].fieldValues[seriesIndex];
+                     var point = {
+                         x:timeStart,
+                         y:value,
+                         name: "classification: "+data[i].classification
+                     };
+                     if (data[i].classification) {
+                         point.classification = true;
+                     } else {
+                         point.classification = false;
+                         point.color = 'red';
+                         point.marker = {radius: 2.8};
+                     }
+                     chart.series[0].data.push(point);
+                 }
+             };
+             /** 
+              * select time series
+              * create select options elements for series field names
+              * @param el: select jquery element
+              * @param seriesChoices: series fieldNames array
+              */
+             var selectSeries = function (el, seriesChoices) {
+                 if (el.prop('tagName').toLowerCase() === 'select') {
+                     for (var i = 0; i < seriesChoices.length; i++) {
+                         el.append("<option value='"+i+"'>"+seriesChoices[i]+"</option>");
+                     }
+                 } else {
+                     return el.append("<h1 style='color:red'>INVALID SELECT ELEMENT</h1>");
+                 }
+             };
+             /* Increment time by specified hours*/
+             var incrementTime = function(timeObj, hours) {
+                 return (
+                     timeObj.setTime(timeObj.getTime() + (hours * 60 * 60 * 1000))
+                 );
+             }
+             /* Random value generator by a percentage*/
+             var randomValueGen = function(percent, value) {
+                 var factor = percent / 100;
+                 var upperThresh = 1 + factor;
+                 var lowerThresh = 1 - factor;
+                 var randomValue = Math.random() * (upperThresh - lowerThresh) + lowerThresh;
+                 return randomValue * value;
+             }
+             /**
+              * Magnifies the data by adding more points to it
+              * @param data: data to magnify
+              */
+             var magnifyData = function(data) {
+                 var timeStartObj = new Date(data[0].timeStampStart);
+                 var magnifiedData = [];
+                 for (var i = 0; i < 200; i++) {
+                     var dataObj = {};
+                     if (i > 0) {
+                         incrementTime(timeStartObj, 1);
+                     }
+                     dataObj.timeStampStart = timeStartObj.getTime();
+                     
+                     var newFieldValues = [];
+                     for (var j = 0; j < data[0].fieldValues.length; j++) {
+                         var randomValue = randomValueGen(20, data[0].fieldValues[j]);
+                         /* console.log(randomValue);*/
+                         newFieldValues.push(randomValue);
+                     }
+                     
+                     dataObj.fieldValues = newFieldValues;
+                     dataObj.classification = Math.random() >= 0.5;
+                     
+                     magnifiedData.push(dataObj);
+                 }
+                 return magnifiedData;
+             };
+
+             $.getJSON('chart-data.json', function (data) {
+                 var chart =  {
+                     chart: {
+                         zoomType: 'x',
+                     },
+                     title: {
+                         text: "Instrument: "+data.sigDef.foundationInstrument+"<br>Type: "+data.sigDef.sigType
+                     },
+                     subtitle: {
+                         text: document.ontouchstart === undefined ?
+                               'Click and drag in the plot area to zoom in' : 'Pinch the chart to zoom in'
+                     },
+                     xAxis: {
+                         type: 'datetime'
+                     },
+                     yAxis: {
+                         title: {
+                             text: 'Value'
+                         },
+                     },
+                     legend: {
+                         enabled: false
+                     },
+                     tooltip: {
+                     },
+                     plotOptions: {
+                         area: {
+                             fillColor: {
+                                 linearGradient: {
+                                     x1: 0,
+                                     y1: 0,
+                                     x2: 0,
+                                     y2: 1
+                                 },
+                                 stops: [
+                                     [0, Highcharts.getOptions().colors[0]],
+                                     [1, Highcharts.Color(Highcharts.getOptions().colors[0]).setOpacity(0).get('rgba')]
+                                 ]
+                             },
+                             marker: {
+                                 radius: 2
+                             },
+                             lineWidth: 1,
+                             states: {
+                                 hover: {
+                                     lineWidth: 1
+                                 }
+                             },
+                             threshold: null
+                         }
+                     },
+
+                     series: [{
+                         type: 'area'
+                     }]
+                 };
+
+                 data.data = magnifyData(data.data);
+                 
+                 var selectSeriesElement = $("#series-options");
+                 selectSeries(selectSeriesElement, data.sigDef.fieldNames);
+                 selectSeriesElement.change(function(event){
+                     var seriesIndex = $(this).val();
+                     genSeries(chart, data.data, seriesIndex);
+                     Highcharts.chart('chart', chart);
+                 });
+
+                 console.log();
+                 
+                 genSeries(chart, data.data, 0);
+                 Highcharts.chart('chart', chart);
+             }); 
+         });
+        </script>
+    </body>
+</html>
